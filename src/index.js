@@ -10,8 +10,26 @@ import './styles/custom.scss';
 	context and background filtering
  */
 
-const context = getContext(['shopper']);
+const context = getContext(['collection', 'shopper', 'metaImagesAndVideos']);
 
+let backgroundFilters = [];
+// if (context.collection?.handle) {
+// 	backgroundFilters.push({
+// 		field: 'collection_handle',
+// 		value: context.collection.handle,
+// 		type: 'value',
+// 		background: true,
+// 		metaImagesAndVideos: context.metaImagesAndVideos,
+// 	});
+// }
+const collectionFilter = {
+	field: 'collection_handle',
+	value: 'jewelry-category-bracelets-bangle',
+	type: 'value',
+	background: true,
+	metaImagesAndVideos: context.metaImagesAndVideos,
+};
+backgroundFilters.push(collectionFilter);
 /*
 	configuration and instantiation
  */
@@ -43,7 +61,7 @@ const config = {
 				},
 			},
 			config: {
-				branch: BRANCHNAME,
+				branch: BRANCHNAME || 'production',
 			},
 		},
 	},
@@ -52,7 +70,18 @@ const config = {
 			{
 				config: {
 					id: 'search',
+					settings: {
+						infinite: {
+							backfill: 5,
+						},
+					},
 					plugins: [[plugin]],
+					globals: {
+						filters: backgroundFilters,
+						pagination: {
+							pageSize: 40,
+						},
+					},
 				},
 				targeters: [
 					{
@@ -84,6 +113,11 @@ const config = {
 				config: {
 					id: 'autocomplete',
 					selector: '#search-input',
+				},
+				globals: {
+					pagination: {
+						pageSize: 6,
+					},
 				},
 				targeters: [
 					{
